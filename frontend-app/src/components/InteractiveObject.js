@@ -1,17 +1,48 @@
-import React, { useState, useEffect } from 'react';
-import { a, useSpring } from '@react-spring/three';
-import { useLoader } from '@react-three/fiber';
-import * as THREE from 'three';
+import React, { useState } from "react";
+import { useLoader } from "@react-three/fiber";
+import { Html } from "@react-three/drei";
+import * as THREE from "three";
 
-const InteractiveObject = ({ position, onClick, color = 'red' }) => {
-    const texture = useLoader(THREE.TextureLoader, '/hatter/teapot.png');
-    
+const InteractiveObject = ({ position, name, texturePath, geometrySize = [2, 2], onClick }) => {
+  const [hovered, setHovered] = useState(false);
+
+  const texture = useLoader(THREE.TextureLoader, texturePath);
+
   return (
-    <mesh position={position} onClick={onClick}>
-      <sphereGeometry args={[0.5, 32, 32]} />
-      <planeGeometry args={[2, 2]} />
-      <meshStandardMaterial map={texture} transparent={true} />
-    </mesh>
+    <group position={position}>
+      <mesh
+        onPointerOver={() => {
+          setHovered(true);
+          document.body.style.cursor = "pointer";
+        }}
+        onPointerOut={() => {
+          setHovered(false);
+          document.body.style.cursor = "default";
+        }}
+        onClick={onClick}
+      >
+        <planeGeometry args={geometrySize} />
+        <meshStandardMaterial map={texture} transparent />
+      </mesh>
+
+      {/* Hover Tooltip*/}
+      {hovered && (
+        <Html position={[0, 0.8, 0]} center>
+          <div
+            style={{
+              background: "rgba(0, 0, 0, 0.7)",
+              padding: "5px 10px",
+              borderRadius: "5px",
+              color: "white",
+              fontSize: "12px",
+              whiteSpace: "nowrap",
+            }}
+          >
+            Click {name}
+          </div>
+        </Html>
+      )}
+    </group>
   );
 };
 

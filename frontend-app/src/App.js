@@ -2,24 +2,9 @@
 import React, { useState } from 'react';
 import ThreeScene from './components/ThreeScene';
 import { Box, Paper, TextField, Button, Typography } from '@mui/material';
-import { useGUIController } from './components/GUIController';
-
-import SoundCloudPlayer from './components/SoundCloudPlayer';
+import { FaPenFancy } from 'react-icons/fa';
 
 function App() {
-
-
-  //controls for my prototyping gui
-  const guiParams = {
-    cameraX: 0,
-    cameraY: 2,
-    cameraZ: 10,
-    orbitEnableZoom: true,
-  };
-
-  useGUIController(guiParams);
-
-
   const [query, setQuery] = useState('');
   const [conversation, setConversation] = useState([]);
   const [jumpTrigger, setJumpTrigger] = useState(0);
@@ -43,7 +28,7 @@ function App() {
   };
 
   // Clicking on the interactive object
-  const onObjectClick = async (promptText) => {
+  const onInteractiveObjectClick = async (promptText) => {
     // Append the prompt text as a User message
     const userMessage = { sender: 'env', text: promptText };
     setConversation((prev) => [...prev, userMessage]);
@@ -51,7 +36,7 @@ function App() {
     // Call the backend api to talk to chatgtp
     const responseText = await callFlaskApi(promptText);
 
-    // Append model's response
+        // Append model's response
     const hatterMessage = { sender: 'Hatter', text: responseText };
     setConversation((prev) => [...prev, hatterMessage]);
 
@@ -81,15 +66,15 @@ function App() {
   return (
     <Box sx={{ display: 'flex', height: '100vh' }}>
       {/* Left side: Three.js viewport */}
-      <Box sx={{ width: '50%', height: '100vh', backgroundColor: '#272727' }}>
-        <ThreeScene jumpTrigger={jumpTrigger} onObjectClick={onObjectClick} />
+      <Box sx={{ width: '50%', height: '100%', backgroundColor: '#272727' }}>
+        <ThreeScene jumpTrigger={jumpTrigger} onInteractiveObjectClick={onInteractiveObjectClick} />
       </Box>
 
       {/* Right side: Chat area */}
       <Box
         sx={{
           width: '50%',
-          height: '100vh',
+          height: '100%',
           backgroundColor: '#fdf6e3',
           display: 'flex',
           flexDirection: 'column',
@@ -129,7 +114,7 @@ function App() {
             onChange={(e) => setQuery(e.target.value)}
           />
           <Button type="submit" variant="contained" color="primary">
-            Send
+            <FaPenFancy fontSize="large" />
           </Button>
         </Box>
       </Box>

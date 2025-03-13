@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Html } from '@react-three/drei';
 
-const SoundCloudPlayer = ({ autoplay = false, onClose, initialPosition }) => {
+const SoundCloudPlayer = ({ autoplay = false, initialPosition, scale = 0.45 }) => {
   const [fade, setFade] = useState(false);
 
   useEffect(() => {
@@ -9,32 +9,27 @@ const SoundCloudPlayer = ({ autoplay = false, onClose, initialPosition }) => {
     setFade(true);
   }, []);
 
-  // Updated iframe URL for the new song with track id 99566876 and new color.
-  const iframeSrc = `https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/99566876&color=%237f8d84&auto_play=${autoplay ? 'true' : 'false'}&hide_related=false&show_comments=true&show_user=true&show_reposts=false&show_teaser=true`;
-
-  const handleClose = (e) => {
-    e.stopPropagation();
-    setFade(false);
-    // Wait 3000ms for the fade-out to complete before calling onClose
-    setTimeout(() => {
-      if (onClose) onClose();
-    }, 3000);
-  };
+  const iframeSrc = `https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/99566876&color=%237f8d84&auto_play=${
+    autoplay ? 'true' : 'false'
+  }&hide_related=false&show_comments=true&show_user=true&show_reposts=false&show_teaser=true`;
 
   return (
-    <group position={initialPosition || [0, 2, 0]}>
+    <group position={initialPosition || [0, 0, 0]}>
       <Html transform>
+        {/* Outer container with fixed base dimensions */}
         <div
           style={{
             width: '500px',
             height: '200px',
-            position: 'relative',
             backgroundColor: 'rgba(255, 255, 255, 0.7)',
             userSelect: 'none',
             borderRadius: '10px',
             overflow: 'hidden',
             opacity: fade ? 1 : 0,
             transition: 'opacity 3000ms ease',
+            // Wrap inner content in a scaling transform
+            transform: `scale(${scale})`,
+            transformOrigin: 'top left',
           }}
         >
           {/* Vignette overlay */}
@@ -50,29 +45,6 @@ const SoundCloudPlayer = ({ autoplay = false, onClose, initialPosition }) => {
                 'radial-gradient(ellipse at center, transparent 50%, rgba(0,0,0,0.5) 100%)',
             }}
           />
-          {/* Close Button */}
-          <button
-            onClick={handleClose}
-            title="Close and stop music"
-            style={{
-              position: 'absolute',
-              top: '8px',
-              right: '8px',
-              background: 'rgba(255,255,255,0.8)',
-              color: '#000',
-              border: 'none',
-              borderRadius: '50%',
-              width: '32px',
-              height: '32px',
-              fontSize: '18px',
-              fontWeight: 'bold',
-              cursor: 'pointer',
-              boxShadow: '0 2px 4px rgba(0,0,0,0.3)',
-              zIndex: 10,
-            }}
-          >
-            ×
-          </button>
           <iframe
             width="500"
             height="166"
